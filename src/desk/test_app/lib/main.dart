@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:package_info_plus/package_info_plus.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -56,7 +56,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  PackageInfo _packageInfo = PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+    buildSignature: 'Unknown',
+    installerStore: 'Unknown',
+  );
+  @override
+  void initState() {
+    super.initState();
+    _initPackageInfo();
+  }
+  Future<void> _initPackageInfo() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -67,7 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-
+Widget _infoTile(String title, String subtitle) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(subtitle.isEmpty ? 'Not set' : subtitle),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -111,6 +134,20 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),Expanded(
+              child: ListView(
+                    children: <Widget>[
+                      _infoTile('App name', _packageInfo.appName),
+                      _infoTile('Package name', _packageInfo.packageName),
+                      _infoTile('App version', _packageInfo.version),
+                      _infoTile('Build number', _packageInfo.buildNumber),
+                      _infoTile('Build signature', _packageInfo.buildSignature),
+                      _infoTile(
+              'Installer store',
+              _packageInfo.installerStore ?? 'not available',
+                      ),
+                    ],
+                  ),
             ),
           ],
         ),
