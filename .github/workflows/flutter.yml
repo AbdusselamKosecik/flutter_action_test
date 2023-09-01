@@ -78,25 +78,4 @@ jobs:
           next1: ${{needs.windows.outputs.next1}}
           next2: ${{needs.windows.outputs.next2}}
       - uses: actions/checkout@v3
-   
-     
-      - name: Use the version
-        run: |
-          echo "$next1 $next2"
-
-     
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
-      - run: flutter --version
-      - name: Install project dependencies
-        working-directory: ./src/desk/test_app
-        run: flutter pub get
-      - name: Enable windows build
-        working-directory: ./src/desk/test_app
-        run: flutter config --enable-windows-desktop
-      - name: Build artifacts
-        working-directory: ./src/desk/test_app
-        run: flutter build apk --no-tree-shake-icons --release --build-name ${{next2}} --build-number ${{github.run_number}}
-      
 
