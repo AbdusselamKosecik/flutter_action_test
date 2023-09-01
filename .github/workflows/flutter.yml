@@ -32,24 +32,32 @@ jobs:
         run: |
           echo ${{ steps.version.outputs.type }}
 
-   
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+      - run: flutter --version
+      - name: Install project dependencies
+        working-directory: ./src/desk/test_app
+        run: flutter pub get
+      - name: Enable windows build
+        working-directory: ./src/desk/test_app
+        run: flutter config --enable-windows-desktop
+      - name: Build artifacts
+        working-directory: ./src/desk/test_app
+        run: flutter build windows --release
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: ${{steps.version.outputs.next}}-windows.zip
+          directory: ./src/desk/test_app/build/windows/runner/Release   
           
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./src/desk/test_app/linux/main.cc
-          asset_name: linux.cc
+          file: ./src/desk/test_app/build/windows/runner/Release/${{steps.version.outputs.next}}-windows.zip
+          asset_name: ${{steps.version.outputs.next}}-windows.zip
           tag:  ${{ steps.version.outputs.next  }}
           overwrite: true
-          body: "This is my release text"
-          
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./src/desk/test_app/windows/CMakeLists.txt
-          asset_name: Windows.cc
-          tag:  ${{ steps.version.outputs.next  }}
-          overwrite: true
-          body: "This is my release text1"
+          body: "This is my release text" 
