@@ -99,12 +99,4 @@ jobs:
         working-directory: ./src/desk/test_app
         run: flutter build apk --no-tree-shake-icons --release --build-name ${{next2}} --build-number ${{github.run_number}}
       
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./src/desk/test_app/build/app/outputs/flutter-apk/app-release.apk
-          asset_name: ${{steps.version.outputs.next}}-apk.apk
-          tag:  ${{ steps.version.outputs.next  }}
-          overwrite: true
-          body: "${{ steps.version.outputs.next  }} Developer version" 
+
