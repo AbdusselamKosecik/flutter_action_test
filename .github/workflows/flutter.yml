@@ -18,18 +18,19 @@ jobs:
     steps:
       - uses: actions/checkout@v3
    
-      - name: Git Version
+      - uses: PssbleTrngle/VersionManagment@v2
         id: version
-        uses: codacy/git-version@2.7.1
         with:
-          prefix: "dev"
+          token: ${{secrets.GITHUB_TOKEN}}
+          fallback: v0.1.0
+          prefix: v
          
       - name: Use the version
         run: |
-          echo ${{ steps.version.outputs.version }}
+          echo ${{ steps.version.outputs.next }}
       - name: Use the previous version
         run: |
-          echo ${{ steps.version.outputs.previous-version }}
+          echo ${{ steps.version.outputs.type }}
 
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
@@ -37,6 +38,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./src/desk/test_app/linux/main.cc
           asset_name: Windows.cc
-          tag:  ${{ steps.version.outputs.version  }}
+          tag:  ${{ steps.version.outputs.next  }}
           overwrite: true
           body: "This is my release text"
