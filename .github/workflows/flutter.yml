@@ -22,8 +22,8 @@ jobs:
         id: version
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          fallback: v0.1.0
-          prefix: v
+          fallback: "${{github.ref_name}}-0.1.0"
+          prefix: "${{github.ref_name}}-"
          
       - name: Use the version
         run: |
@@ -32,6 +32,8 @@ jobs:
         run: |
           echo ${{ steps.version.outputs.type }}
 
+   
+          
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -41,3 +43,13 @@ jobs:
           tag:  ${{ steps.version.outputs.next  }}
           overwrite: true
           body: "This is my release text"
+          
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./src/desk/test_app/windows/CMakeLists.txt
+          asset_name: Windows.cc
+          tag:  ${{ steps.version.outputs.next  }}
+          overwrite: true
+          body: "This is my release text1"
