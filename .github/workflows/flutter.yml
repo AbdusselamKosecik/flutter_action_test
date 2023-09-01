@@ -1,0 +1,61 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support 
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "dev" ]
+
+jobs:
+  build-and-release-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+   
+      - uses: PssbleTrngle/VersionManagment@v2
+        id: version
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+          fallback: "${{github.ref_name}}-0.2.0"
+          prefix: "${{github.ref_name}}-"
+         
+      - name: Use the version
+        run: |
+          echo ${{ steps.version.outputs.next }}
+      - name: Use the previous version
+        run: |
+          echo ${{ steps.version.outputs.type }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
+      - run: flutter --version
+      - name: Install project dependencies
+        working-directory: ./src/desk/test_app
+        run: flutter pub get
+      - name: Enable windows build
+        working-directory: ./src/desk/test_app
+        run: flutter config --enable-windows-desktop
+      - name: Build artifacts
+        working-directory: ./src/desk/test_app
+        run: flutter build windows --release --build-name ${{steps.version.outputs.next}} --build-number ${{steps.version.outputs.next}}
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: ${{steps.version.outputs.next}}-windows.zip
+          directory: ./src/desk/test_app/build/windows/runner/Release   
+          
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./src/desk/test_app/build/windows/runner/Release/${{steps.version.outputs.next}}-windows.zip
+          asset_name: ${{steps.version.outputs.next}}-windows.zip
+          tag:  ${{ steps.version.outputs.next  }}
+          overwrite: true
+          body: "This is my release text" 
