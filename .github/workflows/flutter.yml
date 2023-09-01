@@ -39,7 +39,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./src/desk/test_app/linux/main.cc
-          asset_name: Windows.cc
+          asset_name: linux.cc
           tag:  ${{ steps.version.outputs.next  }}
           overwrite: true
           body: "This is my release text"
