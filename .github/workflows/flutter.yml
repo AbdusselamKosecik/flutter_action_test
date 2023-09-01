@@ -8,8 +8,6 @@ name: Dart
 on:
   push:
     branches: [ "dev" ]
-  pull_request:
-    branches: [ "dev" ]
 
 jobs:
   build-and-release-windows:
@@ -44,7 +42,7 @@ jobs:
         run: flutter config --enable-windows-desktop
       - name: Build artifacts
         working-directory: ./src/desk/test_app
-        run: flutter build windows --release
+        run: flutter build windows --release --build-name ${{steps.version.outputs.next}} --build-number ${{steps.version.outputs.next}}
       - name: Archive Release
         uses: thedoctor0/zip-release@master
         with:
