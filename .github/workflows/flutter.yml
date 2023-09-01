@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
    
       - name: VersionSet
-        id: version
+        id: step_version
         uses: anothrNick/github-tag-action@1.64.0 # Don't use @master or @v1 unless you're happy to test the latest version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # if you don't want to set write permissions use a PAT token
@@ -36,6 +36,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ./src/desk/test_app/linux/main.cc
           asset_name: Windows.cc
-          tag:  ${{ step.version.outputs.new_tag  }}
+          tag:  ${{ step_version.outputs.new_tag  }}
           overwrite: true
           body: "This is my release text"
