@@ -22,7 +22,7 @@ jobs:
         id: version
         with:
           token: ${{secrets.GITHUB_TOKEN}}
-          fallback: "${{github.ref_name}}-0.1.0"
+          fallback: "${{github.ref_name}}-0.2.0"
           prefix: "${{github.ref_name}}-"
          
       - name: Use the version
